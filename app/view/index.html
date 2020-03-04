@@ -1,41 +1,128 @@
 <html lang='en'>
+
 <head>
   <meta charset='utf-8'>
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
   <link rel='stylesheet' href='../static/style.css'>
   <script src='../static/client.js'></script>
   <title>Shoes Type Classifier</title>
-</head>
-<body>
-<div>
-  <div class='center'>
-    <div class='title'>Classify Shoe Types From Images 👞👟👠</div>
-    <p>
-      Use images of <strong>shoes</strong> and our deeplearning model will tell you which type of shoe is that!
-    </p>
-    <div class='content'>
-      <div class='no-display'>
-        <input id='file-input'
-               class='no-display'
-               type='file'
-               name='file'
-               accept='image/*'
-               onchange='showPicked(this)'>
-      </div>
-      <button class='choose-file-button' type='button' onclick='showPicker()'>Select Image</button>
-      <div class='upload-label'>
-        <label id='upload-label'>No file chosen</label>
+  <nav class="flex items-center justify-between flex-wrap bg-blue-500 p-6">
+    <div class="flex items-center flex-shrink-0 text-white mr-6">
+      <svg class="fill-current h-8 w-8 mr-2" width="54" height="54" viewBox="0 0 54 54"
+        xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z" />
+        </svg>
+      <span class="font-semibold text-xl tracking-tight">Shoe Type Classifier</span>
+    </div>
+    <div class="block lg:hidden">
+      <button
+        class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
+        <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <title>Menu</title>
+          <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+        </svg>
+      </button>
+    </div>
+    <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+      <div class="text-sm lg:flex-grow">
+        <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+          Docs
+        </a>
+        <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+          Examples
+        </a>
+        <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
+          Blog
+        </a>
       </div>
       <div>
-        <img id='image-picked' class='no-display' alt='Chosen Image' height='200'>
+        <a href="#"
+          class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Download</a>
       </div>
-      <div class='analyze'>
-        <button id='analyze-button' class='analyze-button' type='button' onclick='analyze()'>Analyze</button>
+    </div>
+  </nav>
+</head>
+
+<body class="max-w-screen-xl m-auto">
+  <div id="app">
+    <div class='bg-white'>
+      <div class="flex mb-4">
+        <div class="w-2/3 bg-gray-400">
+          <img src="../static/images/landing_hero.jpg" alt="">
+        </div>
+        <div class="w-1/3 p-4">
+          <form class="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div id="mb-4">
+              <div class='no-display'>
+                <input id='file-input' class='no-display' type='file' name='file' accept='image/*'
+                  onchange='showPicked(this)'>
+              </div>
+            </div>
+            <div class="mb-4">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick='showPicker()' type="button">
+                Select Image
+              </button>
+            </div>
+            <div class="mb-6">
+              <div>
+                <img id='image-picked' class='no-display' alt='Chosen Image' height='200'>
+              </div>
+              <div class='analyze'>
+                <button id='analyze-button' class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='button' onclick='analyze()'>Analyze</button>
+              </div>
+              <div class='result-label'>
+                <label id='result-label'></label>
+              </div>
+            </div>
+          </form>
+          <p class="text-center text-gray-500 text-xs">
+            &copy;2020 Acme Corp. All rights reserved.
+          </p>
+        </div>
       </div>
-      <div class='result-label'>
-        <label id='result-label'></label>
+      <!--
+      <div class='title'>Classify Shoe Types From Images 👞👟👠</div>
+      <p>
+        Use images of <strong>shoes</strong> and our deeplearning model will tell you which type of shoe is that!
+      </p>
+      <div class='content'>
+        <div class='no-display'>
+          <input id='file-input' class='no-display' type='file' name='file' accept='image/*'
+            onchange='showPicked(this)'>
+        </div>
+        <button class='choose-file-button' type='button' onclick='showPicker()'>Select Image</button>
+        <div class='upload-label'>
+          <label id='upload-label'>No file chosen</label>
+        </div>
+        <div>
+          <img id='image-picked' class='no-display' alt='Chosen Image' height='200'>
+        </div>
+        <div class='analyze'>
+          <button id='analyze-button' class='analyze-button' type='button' onclick='analyze()'>Analyze</button>
+        </div>
+        <div class='result-label'>
+          <label id='result-label'></label>
+        </div>
+      -->
       </div>
     </div>
   </div>
-</div>
+
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  
+  <!-- production version, optimized for speed -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!'
+      }
+    })
+  </script>
 </body>
+
 </html>
