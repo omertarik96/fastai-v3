@@ -8,6 +8,7 @@ from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
+import os
 
 export_file_url = 'https://www.dropbox.com/s/emed4mwt5i3ez1l/export.pkl?dl=1'
 export_file_name = 'export.pkl'
@@ -33,6 +34,7 @@ classes = ['boots_ankle',
  'slipper_flats',
  'slipper_heels',
  'slippers_boot']
+ 
 path = Path(__file__).parent
 
 app = Starlette()
@@ -85,9 +87,14 @@ async def analyze(request):
 
 @app.route('/analyzesample', methods=['POST'])
 async def analyzesample(request):
-    img_data = await request.form()
-    img_bytes = await (img_data['file'].read())
-    img = open_image(BytesIO(img_bytes))
+    sample_data = await request.form()
+    sample_id = sample_data['sample_id']
+    print(os.getcwd())
+    print(os.listdir())
+    image_name = sample_id + ".jpg"
+    image_path = path / 'static' / 'images' / image_name
+    print(image_path)
+    img = open_image(image_path)
     prediction = learn.predict(img)[0]
     return JSONResponse({'result': str(prediction)})
 

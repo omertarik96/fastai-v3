@@ -1,54 +1,11 @@
 <html lang='en'>
 
 <style>
-  .small-image-show:hover{
-  opacity: 0.8;
-  cursor: pointer;
+  .small-image-show:hover {
+    opacity: 0.8;
+    cursor: pointer;
   }
 </style>
-
-<script >
-  var el = x => document.getElementById(x);
-
-  function loadPreImage(imageSrc) {
-    let preview_image_el = document.getElementById('image-picked');
-    preview_image_el.setAttribute("src", imageSrc);
-    preview_image_el.classList.remove('no-display');
-  }
-
-
-  function analyze2() {
-    var uploadFiles = el("file-input").files;
-    
-    if (uploadFiles.length !== 1) {
-      loadPreImage(el("test1").src);
-    }
-
-    else {
-      // From file upload
-      el("analyze-button").innerHTML = "Analyzing...";
-      var xhr = new XMLHttpRequest();
-      var loc = window.location;
-      xhr.open("POST", `${loc.protocol}//${loc.hostname}:${loc.port}/analyze`,
-        true);
-      xhr.onerror = function() {
-        alert(xhr.responseText);
-      };
-      xhr.onload = function(e) {
-        if (this.readyState === 4) {
-          var response = JSON.parse(e.target.responseText);
-          el("result-label").innerHTML = `Result = ${response["result"]}`;
-        }
-        el("analyze-button").innerHTML = "Analyze";
-      };
-    
-    
-      var fileData = new FormData();
-      fileData.append("file", uploadFiles[0]);
-      xhr.send(fileData);
-    }
-  }
-</script>
 
 
 <head>
@@ -77,19 +34,13 @@
     </div>
     <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
       <div class="text-sm lg:flex-grow">
-        <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-          Docs
-        </a>
-        <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-          Examples
-        </a>
-        <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
-          Blog
+        <a href="/#" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+          About
         </a>
       </div>
       <div>
-        <a href="#"
-          class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Download</a>
+        <a href="mailto:omertarikkoc@gmail.com"
+          class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Contact</a>
       </div>
     </div>
   </nav>
@@ -115,7 +66,7 @@
                 <img id='image-picked' class='no-display' alt='Chosen Image' class="max-w-200">
               </div>
               <div class='upload-label'>
-                <label id='upload-label'>{{imageShow}}</label>
+                <label id='upload-label'></label>
               </div>
             </div>
 
@@ -134,16 +85,18 @@
               </div>
             </div>
             <div class="mb-6">
-              <div class='result-label' >
-                <label id='result-label'></label>
+              <div class='result-label text-center'>
+                <label id='result-label' class="no-display bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"></label>
               </div>
             </div>
             <div class="mb-6">
               <p>Don't you have any images?</p>
               <p>Try these:</p>
-              <div class="flex items-center mt-2"> 
-                <a  v-for="image in images" :key="image.id"  style="display: inline-block; margin: 0 2px;" class="small-image-show" >
-                  <img :src="image.path" :id="image.id" style="max-width: 60px; border-radius: 0.25rem !important" onclick='loadPreImage(this.src)'/>
+              <div class="flex items-center mt-2">
+                <a v-for="image in images" :key="image.id" style="display: inline-block; margin: 0 2px;"
+                  class="small-image-show">
+                  <img :src="image.path" :id="image.id" style="max-width: 60px; border-radius: 0.25rem !important"
+                    onclick='loadPreImage(this.src, this.id)' />
                 </a>
               </div>
             </div>
@@ -154,30 +107,6 @@
           </p>
         </div>
       </div>
-      <!--
-      <div class='title'>Classify Shoe Types From Images 👞👟👠</div>
-      <p>
-        Use images of <strong>shoes</strong> and our deeplearning model will tell you which type of shoe is that!
-      </p>
-      <div class='content'>
-        <div class='no-display'>
-          <input id='file-input' class='no-display' type='file' name='file' accept='image/*'
-            onchange='showPicked(this)'>
-        </div>
-        <button class='choose-file-button' type='button' onclick='showPicker()'>Select Image</button>
-        <div class='upload-label'>
-          <label id='upload-label'>No file chosen</label>
-        </div>
-        <div>
-          <img id='image-picked' class='no-display' alt='Chosen Image' height='200'>
-        </div>
-        <div class='analyze'>
-          <button id='analyze-button' class='analyze-button' type='button' onclick='analyze()'>Analyze</button>
-        </div>
-        <div class='result-label'>
-          <label id='result-label'></label>
-        </div>
-      -->
     </div>
   </div>
   </div>
@@ -189,65 +118,33 @@
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 
   <script>
-    Vue.filter('kb', val => {
-      return Math.floor(val / 1024);
-    });
     var app = new Vue({
       el: '#app',
       data: {
         files: [],
-        images: [
-          { id: "test1", path: '../static/images/test1.jpg' },
-          { id: "test2", path: '../static/images/test2.jpg' },
+        images: [{
+            id: "test1",
+            path: '../static/images/test1.jpg'
+          },
+          {
+            id: "test2",
+            path: '../static/images/test2.jpg'
+          },
+          {
+            id: "test3",
+            path: '../static/images/test3.jpg'
+          },
+          {
+            id: "test4",
+            path: '../static/images/test4.jpg'
+          },
+          {
+            id: "test5",
+            path: '../static/images/test5.jpg'
+          },
         ],
-        imageShowValue: "hey"
       },
-      computed: {
-        uploadDisabled() {
-          return this.files.length === 0;
-        },
-
-        changePreviewImage: function (src) {
-          this.imageShowValue = src;
-         return this.imageShowValue
-        } 
-      },
-      methods: {
-        addFile(e) {
-          let droppedFiles = e.dataTransfer.files;
-          if (!droppedFiles) return;
-          // this tip, convert FileList to array, credit: https://www.smashingmagazine.com/2018/01/drag-drop-file-uploader-vanilla-js/
-          ([...droppedFiles]).forEach(f => {
-            this.files.push(f);
-          });
-        },
-        removeFile(file) {
-          this.files = this.files.filter(f => {
-            return f != file;
-          });
-        },
-        upload() {
-
-          let formData = new FormData();
-          this.files.forEach((f, x) => {
-            formData.append('file' + (x + 1), f);
-          });
-
-          fetch('https://httpbin.org/post', {
-              method: 'POST',
-              body: formData
-            })
-            .then(res => res.json())
-            .then(res => {
-              console.log('done uploading', res);
-            })
-            .catch(e => {
-              console.error(JSON.stringify(e.message));
-            });
-        }
-      }
     })
   </script>
 </body>
-
 </html>
