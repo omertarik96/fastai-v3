@@ -9,10 +9,30 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-export_file_url = 'https://www.dropbox.com/s/6bgq8t6yextloqp/export.pkl?raw=1'
+export_file_url = 'https://www.dropbox.com/s/emed4mwt5i3ez1l/export.pkl?dl=1'
 export_file_name = 'export.pkl'
 
-classes = ['black', 'grizzly', 'teddys']
+classes = ['boots_ankle',
+ 'boots_knee_half',
+ 'boots_mid_calf',
+ 'boots_over_the_knee',
+ 'boots_prewalker',
+ 'sandals_athletic',
+ 'sandals_flat',
+ 'sandals_heel',
+ 'shoes_boat',
+ 'shoes_clogs_and_mules',
+ 'shoes_crib',
+ 'shoes_firstwalker',
+ 'shoes_flats',
+ 'shoes_heels',
+ 'shoes_loafers',
+ 'shoes_oxfords',
+ 'shoes_prewalker',
+ 'shoes_sneakers_and_athletic',
+ 'slipper_flats',
+ 'slipper_heels',
+ 'slippers_boot']
 path = Path(__file__).parent
 
 app = Starlette()
