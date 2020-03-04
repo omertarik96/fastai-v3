@@ -7,8 +7,6 @@ COPY requirements.txt .
 
 RUN pip install --upgrade -r requirements.txt
 
-RUN npm install
-
 COPY app app/
 
 RUN python app/server.py

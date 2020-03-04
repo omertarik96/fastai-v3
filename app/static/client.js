@@ -1,8 +1,16 @@
 var el = x => document.getElementById(x);
 
+function toggleButton(buttonId){
+  console.log(buttonId);
+  var button = el(buttonId);
+  console.log(button);
+  //console.log(button.style);
+}
+
 function showPicker() {
   el("file-input").click();
 }
+
 
 function showPicked(input) {
   el("upload-label").innerHTML = input.files[0].name;
@@ -12,10 +20,12 @@ function showPicked(input) {
     el("image-picked").className = "";
   };
   reader.readAsDataURL(input.files[0]);
+  
 }
 
 function analyze() {
   var uploadFiles = el("file-input").files;
+  console.log(UploadFiles);
   if (uploadFiles.length !== 1) alert("Please select a file to analyze!");
 
   el("analyze-button").innerHTML = "Analyzing...";
@@ -33,6 +43,8 @@ function analyze() {
     }
     el("analyze-button").innerHTML = "Analyze";
   };
+
+ 
 
   var fileData = new FormData();
   fileData.append("file", uploadFiles[0]);

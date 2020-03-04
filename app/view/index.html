@@ -1,5 +1,56 @@
 <html lang='en'>
 
+<style>
+  .small-image-show:hover{
+  opacity: 0.8;
+  cursor: pointer;
+  }
+</style>
+
+<script >
+  var el = x => document.getElementById(x);
+
+  function loadPreImage(imageSrc) {
+    let preview_image_el = document.getElementById('image-picked');
+    preview_image_el.setAttribute("src", imageSrc);
+    preview_image_el.classList.remove('no-display');
+  }
+
+
+  function analyze2() {
+    var uploadFiles = el("file-input").files;
+    
+    if (uploadFiles.length !== 1) {
+      loadPreImage(el("test1").src);
+    }
+
+    else {
+      // From file upload
+      el("analyze-button").innerHTML = "Analyzing...";
+      var xhr = new XMLHttpRequest();
+      var loc = window.location;
+      xhr.open("POST", `${loc.protocol}//${loc.hostname}:${loc.port}/analyze`,
+        true);
+      xhr.onerror = function() {
+        alert(xhr.responseText);
+      };
+      xhr.onload = function(e) {
+        if (this.readyState === 4) {
+          var response = JSON.parse(e.target.responseText);
+          el("result-label").innerHTML = `Result = ${response["result"]}`;
+        }
+        el("analyze-button").innerHTML = "Analyze";
+      };
+    
+    
+      var fileData = new FormData();
+      fileData.append("file", uploadFiles[0]);
+      xhr.send(fileData);
+    }
+  }
+</script>
+
+
 <head>
   <meta charset='utf-8'>
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
@@ -12,7 +63,7 @@
         xmlns="http://www.w3.org/2000/svg">
         <path
           d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z" />
-        </svg>
+      </svg>
       <span class="font-semibold text-xl tracking-tight">Shoe Type Classifier</span>
     </div>
     <div class="block lg:hidden">
@@ -44,40 +95,62 @@
   </nav>
 </head>
 
-<body class="max-w-screen-xl m-auto">
-  <div id="app">
+<body>
+  <div id="app" class="bg-white max-w-screen-xl m-auto">
     <div class='bg-white'>
       <div class="flex mb-4">
-        <div class="w-2/3 bg-gray-400">
+        <div class="w-2/3">
           <img src="../static/images/landing_hero.jpg" alt="">
         </div>
         <div class="w-1/3 p-4">
-          <form class="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <form class="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-20">
             <div id="mb-4">
               <div class='no-display'>
                 <input id='file-input' class='no-display' type='file' name='file' accept='image/*'
                   onchange='showPicked(this)'>
               </div>
             </div>
-            <div class="mb-4">
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick='showPicker()' type="button">
-                Select Image
-              </button>
-            </div>
             <div class="mb-6">
               <div>
-                <img id='image-picked' class='no-display' alt='Chosen Image' height='200'>
+                <img id='image-picked' class='no-display' alt='Chosen Image' class="max-w-200">
               </div>
-              <div class='analyze'>
-                <button id='analyze-button' class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='button' onclick='analyze()'>Analyze</button>
+              <div class='upload-label'>
+                <label id='upload-label'>{{imageShow}}</label>
               </div>
-              <div class='result-label'>
+            </div>
+
+            <div class="mb-4">
+              <div class="flex items-center justify-between">
+                <button
+                  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  onclick='showPicker()' type="button">
+                  Select Image
+                </button>
+
+                <button id='analyze-button'
+                  class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                  type='button' onclick='analyze2()'>Analyze</button>
+
+              </div>
+            </div>
+            <div class="mb-6">
+              <div class='result-label' >
                 <label id='result-label'></label>
               </div>
             </div>
+            <div class="mb-6">
+              <p>Don't you have any images?</p>
+              <p>Try these:</p>
+              <div class="flex items-center mt-2"> 
+                <a  v-for="image in images" :key="image.id"  style="display: inline-block; margin: 0 2px;" class="small-image-show" >
+                  <img :src="image.path" :id="image.id" style="max-width: 60px; border-radius: 0.25rem !important" onclick='loadPreImage(this.src)'/>
+                </a>
+              </div>
+            </div>
+
           </form>
           <p class="text-center text-gray-500 text-xs">
-            &copy;2020 Acme Corp. All rights reserved.
+            &copy;2020 Omer Tarik Koc. All rights reserved.
           </p>
         </div>
       </div>
@@ -105,21 +178,73 @@
           <label id='result-label'></label>
         </div>
       -->
-      </div>
     </div>
+  </div>
   </div>
 
   <!-- development version, includes helpful console warnings -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  
+
   <!-- production version, optimized for speed -->
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 
   <script>
+    Vue.filter('kb', val => {
+      return Math.floor(val / 1024);
+    });
     var app = new Vue({
       el: '#app',
       data: {
-        message: 'Hello Vue!'
+        files: [],
+        images: [
+          { id: "test1", path: '../static/images/test1.jpg' },
+          { id: "test2", path: '../static/images/test2.jpg' },
+        ],
+        imageShowValue: "hey"
+      },
+      computed: {
+        uploadDisabled() {
+          return this.files.length === 0;
+        },
+
+        changePreviewImage: function (src) {
+          this.imageShowValue = src;
+         return this.imageShowValue
+        } 
+      },
+      methods: {
+        addFile(e) {
+          let droppedFiles = e.dataTransfer.files;
+          if (!droppedFiles) return;
+          // this tip, convert FileList to array, credit: https://www.smashingmagazine.com/2018/01/drag-drop-file-uploader-vanilla-js/
+          ([...droppedFiles]).forEach(f => {
+            this.files.push(f);
+          });
+        },
+        removeFile(file) {
+          this.files = this.files.filter(f => {
+            return f != file;
+          });
+        },
+        upload() {
+
+          let formData = new FormData();
+          this.files.forEach((f, x) => {
+            formData.append('file' + (x + 1), f);
+          });
+
+          fetch('https://httpbin.org/post', {
+              method: 'POST',
+              body: formData
+            })
+            .then(res => res.json())
+            .then(res => {
+              console.log('done uploading', res);
+            })
+            .catch(e => {
+              console.error(JSON.stringify(e.message));
+            });
+        }
       }
     })
   </script>
