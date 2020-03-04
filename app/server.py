@@ -76,6 +76,11 @@ async def homepage(request):
     html_file = path / 'view' / 'index.html'
     return HTMLResponse(html_file.open().read())
 
+@app.route('/about')
+async def aboutpage(request):
+    html_file = path / 'view' / 'about.html'
+    return HTMLResponse(html_file.open().read())
+
 
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
@@ -89,11 +94,8 @@ async def analyze(request):
 async def analyzesample(request):
     sample_data = await request.form()
     sample_id = sample_data['sample_id']
-    print(os.getcwd())
-    print(os.listdir())
     image_name = sample_id + ".jpg"
     image_path = path / 'static' / 'images' / image_name
-    print(image_path)
     img = open_image(image_path)
     prediction = learn.predict(img)[0]
     return JSONResponse({'result': str(prediction)})
