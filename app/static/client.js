@@ -57,7 +57,7 @@ function analyze() {
 function loadPreImage(imageSrc, imageId) {
   let preview_image_el = document.getElementById('image-picked');
   preview_image_el.setAttribute("src", imageSrc);
-  preview_image_el.classList.remove('no-display');
+  //preview_image_el.classList.remove('no-display');
   preview_image_el.setAttribute("sampleid", imageId)
 }
 
