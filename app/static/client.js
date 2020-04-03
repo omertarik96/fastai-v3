@@ -1,5 +1,16 @@
 var el = x => document.getElementById(x);
 
+function toggleMobileMenu(){
+  menu = el("menu");
+  if (menu.classList.contains("hidden")) {
+    // it is hidden, show the menu
+    menu.classList.remove("hidden");
+  } else {
+    // menu is not hidden, hide the menu
+    menu.classList.add("hidden");
+  }
+}
+
 function toggleButton(buttonId) {
   console.log(buttonId);
   var button = el(buttonId);
